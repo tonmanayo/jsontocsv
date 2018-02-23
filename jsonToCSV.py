@@ -2,21 +2,22 @@ import csv
 import json
 import pprint
 import glob
+import collections
 
 
-def dynamicPrint(fileName, outputFile):
-    items = {'id': str(i)}
+def dynamicPrint(fileName, outputFile, items):
     if fileName in inputFile.keys():
         for value in inputFile[fileName]:
             for key1, val1 in value.items():
                 try:
-                    items[key1] = items[key1] + "\n" + val1
+                    items[key1.lower()] = items[key1.lower()].replace(",", "") + "\n" + val1.replace(",", "")
                 except KeyError:
-                    items[key1] = val1
-    writer = csv.DictWriter(outputFile, fieldnames=items.keys())
+                    items[key1.lower()] = val1.replace(",", "")
+    csvWriter = csv.DictWriter(outputFile, fieldnames=items.keys())
     if i == 0:
-        writer.writeheader()
-    writer.writerow(items)
+        csvWriter.writeheader()
+    csvWriter.writerow(items)
+
 
 miOutputFile = open('misc.csv', 'w')
 edOutputFile = open('education_and_training.csv', 'w')
@@ -25,15 +26,15 @@ crOutputFile = open('credibility.csv', 'w')
 awOutputFile = open('awards.csv', 'w')
 acOutputFile = open('accomplishments.csv', 'w')
 skOutputFile = open('skills.csv', 'w')
-
-#outputFile = open('test.csv', 'w')
 wxOutputFile = open('workExperience.csv', 'w')
 bOutputFile = open('basic.csv', 'w')
 
 fileList = glob.glob('jsonFiles/*.json')
+fileList.sort()
 i = 0
-pprint.pprint(fileList)
+#pprint.pprint(fileList)
 for file in fileList:
+    pprint.pprint(file.title())
     f = open(file, 'r')
     inputFile = json.load(f)
     f.close()
@@ -48,7 +49,7 @@ for file in fileList:
     phone = ""
     url = ""
     workExperience = [{}]
-    #pprint.pprint(inputFile)
+   # pprint.pprint(inputFile)
     if 'basics' in inputFile.keys():
         bFieldNames = ['id', 'firstName', 'middleName', 'surname', 'gender', 'email', 'phone', 'url', 'title']
 
@@ -83,25 +84,118 @@ for file in fileList:
                          'firstName': firstName,
                          'middleName': middleName,
                          'surname': surname,
-                         'gender':gender,
+                         'gender': gender,
                          'email': emails,
                          'phone': phone,
                          'url': url,
                          'title': title})
 
-    dynamicPrint('misc', miOutputFile)
+    miHeaders = {'id': i, 'hobbies': "", 'interests': "", 'miscellaneous': "",
+                 'personal interests': "", 'personal strength': "",
+                 'personal strengths': "", 'strength': "", 'strengths': ""}
+    miHeaders = collections.OrderedDict(sorted(miHeaders.items(), key=lambda t: len(t[0])))
+    dynamicPrint('misc', miOutputFile, miHeaders)
 
-    dynamicPrint('education_and_training', edOutputFile)
+    edHeaders = {'id': i, 'academic background': "", 'academic experience': "",
+                 'academic training': "", 'apprenticeships': "", 'certification': "",
+                 'certifications': "", 'college activities': "", 'course project experience': "",
+                 'courses': "", 'education': "", 'education and training': "", 'educational background': "",
+                 'educational qualifications': "", 'educational training': "", 'internship experience': "",
+                 'internships': "", 'patent': "", 'professional training': "",
+                 'programs': "", 'related course projects': "", 'related courses': "",
+                 'special training': "", 'study': "", 'training': "", 'workshops': "",
+                 'qualifications': ""}
 
-    dynamicPrint('extracurricular', exOutputFile)
+    edHeaders = collections.OrderedDict(sorted(edHeaders.items(), key=lambda t: len(t[0])))
+    dynamicPrint('education_and_training', edOutputFile, edHeaders)
 
-    dynamicPrint('credibility', crOutputFile)
+    exHeaders = {'id': i, 'activities': "",
+                 'activities and honors': "",
+                 'affiliations': "",
+                 'associations': "",
+                 'athletic involvement': "",
+                 'civic activities': "",
+                 'community involvement': "",
+                 'extra-curricular activities': "",
+                 'honors': "",
+                 'memberships': "",
+                 'professional activities': "",
+                 'professional affiliations': "",
+                 'professional associations': "",
+                 'professional memberships': "",
+                 'volunteer experience': "",
+                 'volunteer work': ""}
+    exHeaders = collections.OrderedDict(sorted(exHeaders.items(), key=lambda t: len(t[0])))
+    dynamicPrint('extracurricular', exOutputFile, exHeaders)
 
-    dynamicPrint('awards', awOutputFile)
+    crHeaders = {'id': i, 'portfolio': "",
+                 'recommendations': "",
+                 'references': "",
+                 'social media profiles': "",
+                 'social profiles': "",
+                 'testimonials': "",
+                 'web portfolio': "",
+                 'websites': ""}
+    crHeaders = collections.OrderedDict(sorted(crHeaders.items(), key=lambda t: len(t[0])))
+    dynamicPrint('credibility', crOutputFile, crHeaders)
 
-    dynamicPrint('accomplishments', acOutputFile)
+    awHeaders = {'id': i, 'academic Honors': "",
+                 'accolades': "",
+                 'accomplishments': "",
+                 'achievements': "",
+                 'activities and honors': "",
+                 'awards': "",
+                 'distinctions': "",
+                 'endorsements': "",
+                 'fellowship': "",
+                 'fellowships': "",
+                 'honors': "",
+                 'scholarship': "",
+                 'scholarships': ""}
+    awHeaders = collections.OrderedDict(sorted(awHeaders.items(), key=lambda t: len(t[0])))
+    dynamicPrint('awards', awOutputFile, awHeaders)
 
-    dynamicPrint('skills', skOutputFile)
+    acHeaders = {'conference presentations': "",
+                 'conventions': "",
+                 'current research interests': "",
+                 'dissertation': "",
+                 'dissertations': "",
+                 'exhibits': "",
+                 'licenses': "",
+                 'papers': "",
+                 'presentations': "",
+                 'professional publications': "",
+                 'publications': "",
+                 'research': "",
+                 'research grants': "",
+                 'research interests': "",
+                 'research projects': "",
+                 'thesis / theses': ""}
+    acHeaders = collections.OrderedDict(sorted(acHeaders.items(), key=lambda t: len(t[0])))
+    dynamicPrint('accomplishments', acOutputFile, acHeaders)
+
+    skHeaders = {'id': i, 'Abilities': "",
+                 'Areas of Experience': "",
+                 'Areas of Expertise': "",
+                 'Areas of Knowledge': "",
+                 'Career Related Skills': "",
+                 'Computer Knowledge': "",
+                 'Computer Skills': "",
+                 'Credentials': "",
+                 'Expertise': "",
+                 'Language Competencies and Skills': "",
+                 'Languages': "",
+                 'Professional Skills': "",
+                 'Proficiencies': "",
+                 'Programming Languages': "",
+                 'Qualifications': "",
+                 'Skills': "",
+                 'Specialized Skills': "",
+                 'Technical Experience': "",
+                 'Technical Skills': "",
+                 'Technologies': ""}
+    skHeaders = collections.OrderedDict(sorted(skHeaders.items(), key=lambda t: len(t[0])))
+    dynamicPrint('skills', skOutputFile, skHeaders)
 
     wxFieldNames = ['id', 'date_start', 'jobtitle', 'organization', 'date_end', 'text']
     writer = csv.DictWriter(wxOutputFile, fieldnames=wxFieldNames)
@@ -133,19 +227,3 @@ for file in fileList:
                              'date_end': date_end,
                              'text': text})
     i = i + 1
-#
-# writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-# newRows = [dicFields]
-# newRows.append(dicFields)
-#
-#
-# print(newRows[1])
-#
-# names = ['tony', 'mack', 'has', 'three']
-#
-# writer.writeheader()
-#
-# #writer.writerow({'ID': '1', 'first name': names, 'last name': 'mack'})
-# #writer.writerow({'ID': '2', 'last name': 'Beans'})
-# #writer.writerow({'ID': '3', 'last name': 'Spam'})
-# writer.writerows(newRows)
